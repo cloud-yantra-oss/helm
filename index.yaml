@@ -1,0 +1,17 @@
+apiVersion: v1
+entries:
+  app:
+  - apiVersion: v2
+    appVersion: 0.0.0
+    created: "2023-09-11T14:24:59.65042624Z"
+    description: A Helm chart for Kubernetes
+    digest: 7d70b1ab92869a96ed140f01d0962b0a7e9b3197aa13e80203dd634bf3697525
+    maintainers:
+    - email: pratim@chaudhuri.me
+      name: Pratim Chaudhuri
+    name: app
+    type: application
+    urls:
+    - https://github.com/cloud-yantra-oss/helm/releases/download/app-0.0.1/app-0.0.1.tgz
+    version: 0.0.1
+generated: "2023-09-11T14:24:59.65043094Z"
