@@ -1,0 +1,183 @@
+apiVersion: apps/v1
+  {{- if .Values.stateless }}
+kind: Deployment
+  {{- else }}
+kind: StatefulSet
+  {{- end }}
+metadata:
+  name: {{ include "app-stateless.fullname" . }}
+  labels:
+    {{- include "app-stateless.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  {{- if not .Values.stateless }}
+  serviceName: {{ include "app-stateless.fullname" $ }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "app-stateless.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "app-stateless.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "app-stateless.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+
+      {{- if .Values.pdp.isEnabled }}
+      initContainers:
+        - name: proxy-init
+          image: "{{ .Values.pdp.proxy_init.image.repository }}:{{ .Values.pdp.proxy_init.image.tag }}"
+          # Configure the iptables bootstrap script to redirect traffic to the
+          # Envoy proxy on port 8000, specify that Envoy will be running as user
+          # 1111, and that we want to exclude port 8282 from the proxy for the
+          # OPA health checks. These values must match up with the configuration
+          # defined below for the "envoy" and "opa" containers.
+          args: [ "-p", "8000", "-u", "1111", "-w", "8282" ]
+          securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
+            runAsNonRoot: false
+            runAsUser: 0
+      {{- end }}
+
+      containers:
+
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.commands }}
+          command:
+            {{- range .Values.commands }}
+            - {{ . }}
+            {{- end }}
+          {{- end }}
+          {{- if .Values.arguments }}
+          args:
+            {{- range .Values.arguments }}
+            - {{ . }}
+            {{- end }}
+          {{- end }}
+          env:
+            - name: MERCEROS_KUBERNETES_HOST_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: KUBERNETES_HOST_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: KUBERNETES_POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: KUBERNETES_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: SERVICE_NAME
+              value: {{ include "app-stateless.fullname" . }}
+            {{- if .Values.env }}
+            {{- range $key, $value := .Values.env }}
+            - name: "{{ $key }}"
+              value: {{ $value | quote }}
+            {{- end }}
+            {{- end }}
+          ports:
+          {{- range .Values.ports }}
+            - name: {{ .name }}
+              containerPort: {{ .containerPort }}
+              protocol: {{ .protocol }}
+          {{- end }}
+          {{- if .Values.livenessProbe }}
+          livenessProbe:
+{{ toYaml .Values.livenessProbe | indent 12 }}
+          {{- end }}
+          {{- if .Values.readinessProbe }}
+          readinessProbe:
+{{ toYaml .Values.readinessProbe | indent 12 }}
+          {{- end }}
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+
+{{- if .Values.pdp.isEnabled }}
+        - name: envoy
+          image: "{{ .Values.pdp.envoy.image.repository }}:{{ .Values.pdp.envoy.image.tag }}"
+          securityContext:
+            runAsUser: 1111
+          volumeMounts:
+            - mountPath: /config
+              name: proxy-config
+              readOnly: true
+          args:
+            - "envoy"
+            - "--config-path"
+            - "/config/envoy.yaml"
+          resources:
+            requests:
+              cpu: {{ .Values.pdp.envoy.resources.requests.cpu | quote }}
+              memory: {{ .Values.pdp.envoy.resources.requests.memory | quote }}
+            limits:
+              cpu: {{ .Values.pdp.envoy.resources.limits.cpu | quote }}
+              memory: {{ .Values.pdp.envoy.resources.limits.memory | quote }}
+        - name: opa-envoy
+          image: "{{ .Values.pdp.opa.image.repository }}:{{ .Values.pdp.opa.image.tag }}"
+          securityContext:
+            runAsUser: 1111
+          volumeMounts:
+            - mountPath: /config
+              name: opa-envoy-config
+              readOnly: true
+          args:
+            - "run"
+            - "--server"
+            - "--config-file=/config/config.yaml"
+            - "--addr=localhost:8181"
+            - "--diagnostic-addr=0.0.0.0:8282"
+            - "{{ .Values.pdp.opa.policy.local_path }}"
+          livenessProbe:
+            httpGet:
+              path: /health?plugins
+              scheme: HTTP
+              port: 8282
+            initialDelaySeconds: {{ .Values.pdp.opa.livenessProbe.initialDelaySeconds | int }}
+            periodSeconds: {{ .Values.pdp.opa.livenessProbe.periodSeconds | int }}
+          readinessProbe:
+            httpGet:
+              path: /health?plugins
+              scheme: HTTP
+              port: 8282
+            initialDelaySeconds: {{ .Values.pdp.opa.readinessProbe.initialDelaySeconds | int }}
+            periodSeconds: {{ .Values.pdp.opa.readinessProbe.initialDelaySeconds | int }}
+          resources:
+            requests:
+              cpu: {{ .Values.pdp.opa.resources.requests.cpu | quote }}
+              memory: {{ .Values.pdp.opa.resources.requests.memory | quote }}
+            limits:
+              cpu: {{ .Values.pdp.opa.resources.limits.cpu | quote }}
+              memory: {{ .Values.pdp.opa.resources.limits.memory | quote }}
+
+{{- end }} {{/* .Values.pdp.isEnabled */}}
+{{- if .Values.pdp.isEnabled }}
+      volumes:
+        - name: proxy-config
+          configMap:
+            name: {{ .Release.Name | printf "%s-prxy" | quote }}
+        - name: opa-envoy-config
+          configMap:
+            name: {{ .Release.Name | printf "%s-opa" | quote }}
+{{- end }}

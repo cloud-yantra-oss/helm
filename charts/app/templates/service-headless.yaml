@@ -1,0 +1,15 @@
+{{- if not .Values.stateless }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "app-stateless.fullname" $ }}
+  labels:
+    {{- include "app-stateless.labels" $ | nindent 4 }}
+spec:
+  clusterIP: None
+  selector:
+    {{- include "app-stateless.selectorLabels" $ | nindent 4 }}
+
+---
+{{- end }}

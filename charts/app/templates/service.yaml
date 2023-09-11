@@ -1,0 +1,22 @@
+{{- range .Values.ports }}
+  {{- if .service }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "app-stateless.fullname" $ }}-{{ .name }}
+  labels:
+    {{- include "app-stateless.labels" $ | nindent 4 }}
+spec:
+  type: {{ .service.type }}
+  ports:
+    - port: {{ .containerPort }}
+      targetPort: {{ .containerPort }}
+      protocol: {{ .protocol }}
+      name: {{ .name }}
+  selector:
+    {{- include "app-stateless.selectorLabels" $ | nindent 4 }}
+
+---
+  {{- end }} {{/*- if .service */}}
+{{- end }} {{/*- range .Values.ports */}}
