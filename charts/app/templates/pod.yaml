@@ -176,8 +176,8 @@ spec:
       volumes:
         - name: proxy-config
           configMap:
-            name: {{ .Release.Name | printf "%s-prxy-cnfg" | quote }}
+            name: {{ .Release.Name | printf "%s-prxy" | quote }}
         - name: opa-envoy-config
           configMap:
-            name: {{ .Release.Name | printf "%s-opa-cnfg" | quote }}
+            name: {{ .Release.Name | printf "%s-opa" | quote }}
 {{- end }}

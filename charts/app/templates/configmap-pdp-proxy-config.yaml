@@ -6,7 +6,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Release.Name | printf "%s-prxy-cnfg" | quote }}
+  name: {{ .Release.Name | printf "%s-prxy" | quote }}
 data:
   envoy.yaml: |
     static_resources:

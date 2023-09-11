@@ -6,7 +6,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Release.Name | printf "%s-opa-cnfg" | quote }}
+  name: {{ .Release.Name | printf "%s-opa" | quote }}
 data:
   config.yaml: |
     plugins:
