@@ -4,10 +4,9 @@ on:
   push:
     branches:
       - main
-      - publish-helm-chart
 jobs:
   printInfo:
-    runs-on: [ oss2 ]
+    runs-on: ubuntu-latest
     steps:
       - name: Print Troubleshooting Info
         run: |
