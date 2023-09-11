@@ -43,3 +43,9 @@ manifests:
 ### Generic Application
 
 The chart at [app](charts/app) containt an helm chart for a generic microservice, which can be protected by a [OPA (Open Policy Agent)](https://www.openpolicyagent.org/).
+
+### Postgresql 
+
+The chart at [postgresql](charts/postgresql) containt an helm chart for a deploying a Postgresql server.
+
+The default values are available in the [`values.yaml`](charts/postgresql/values.yaml) file.
