@@ -1,0 +1,51 @@
+# Ref: https://github.com/marketplace/actions/helm-chart-releaser
+name: Release Charts
+on:
+  push:
+    branches:
+      - main
+      - publish-helm-chart
+jobs:
+  printInfo:
+    runs-on: [ oss2 ]
+    steps:
+      - name: Print Troubleshooting Info
+        run: |
+          echo 'github.event_name: ${{ github.event_name }}'
+          echo 'github.ref_type: ${{ github.ref_type }}'
+          echo 'github.ref_name: ${{ github.ref_name }}' 
+          echo 'inputs: ${{ toJSON(inputs) }}'
+          echo 'github: ${{ toJSON(github) }}'
+
+  publish:
+    # depending on default permission settings for your org (contents being read-only or read-write for workloads), you will have to add permissions
+    # see: https://docs.github.com/en/actions/security-guides/automatic-token-authentication#modifying-the-permissions-for-the-github_token
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
+      - name: Install Helm
+        uses: azure/setup-helm@v3
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@v1.5.0
+        with:
+          version: v1.6.0
+          charts_dir: charts/
+          skip_existing: false
+          mark_as_latest: true
+          packages_with_index: true
+        env:
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"

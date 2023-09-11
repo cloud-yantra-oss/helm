@@ -1,0 +1,21 @@
+{{- if .Values.pdp.isEnabled }}
+---
+######################################################################
+# Envoy Config with External Authorization filter that will query OPA.
+######################################################################
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name | printf "%s-opa-cnfg" | quote }}
+data:
+  config.yaml: |
+    plugins:
+      envoy_ext_authz_grpc:
+        addr: :9191
+        path: {{ .Values.pdp.opa.policy.ext_authz.path }}
+        dry-run: {{ .Values.pdp.opa.policy.ext_authz.dry_run }}
+        enable-reflection: {{ .Values.pdp.opa.policy.ext_authz.enable_reflection }}
+    decision_logs:
+      console: {{ .Values.pdp.opa.policy.decision_logs.console }}
+---
+{{- end }}

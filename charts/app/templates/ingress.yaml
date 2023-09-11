@@ -1,0 +1,27 @@
+{{- range $port := .Values.ports }}
+{{- if $port.ingress.enabled }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $.Release.Name }}-{{ $port.name }}
+{{/*  annotations:*/}}
+{{/*    kubernetes.io/ingress.class: traefik*/}}
+spec:
+  rules:
+    - host: {{ $port.ingress.hosts.host }}
+      http:
+        paths:
+      {{- range $path := $port.ingress.hosts.paths }}
+          - path: {{ $path.path }}
+            pathType: {{ $path.pathType }}
+            backend:
+              service:
+                name: {{ include "app-stateless.fullname" $ }}-{{ $port.name }}
+                port:
+                  number: {{ $port.containerPort }}
+      {{- end }}
+---
+{{- end }}
+{{- end }}
+
