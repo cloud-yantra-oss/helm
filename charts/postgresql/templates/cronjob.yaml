@@ -1,5 +1,5 @@
 ---
-  {{- if and .Values.ldap.enabled .Values.ldap.pgldapconfig }}
+{{- if and .Values.ldap.enabled .Values.ldap.pgldapconfig }}
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
@@ -30,4 +30,4 @@ spec:
                 items:
                   - key: pgldap-config.yaml
                     path: pgldap-config.yaml
-  {{- end}}
+{{- end}}
