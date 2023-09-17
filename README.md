@@ -2,9 +2,11 @@
 <!-- TOC -->
 * [Repository of Helm Charts](#repository-of-helm-charts)
   * [How to use the repo?](#how-to-use-the-repo)
-  * [How to use within `skaffold`](#how-to-use-within-skaffold)
   * [Chart List](#chart-list)
     * [Generic Application](#generic-application)
+      * [How to use within `skaffold`](#how-to-use-within-skaffold)
+    * [Postgresql](#postgresql-)
+      * [How to use within `skaffold`](#how-to-use-within-skaffold-1)
 <!-- TOC -->
 
 # Repository of Helm Charts
@@ -25,7 +27,12 @@ The below command will list the Helm charts available under this repo.
 helm search repo cloud-yantra-oss
 ```
 
-## How to use within [`skaffold`](https://skaffold.dev/)
+## Chart List
+### Generic Application
+
+The chart at [app](charts/app) contain a helm chart for a generic microservice, which can be protected by a [OPA (Open Policy Agent)](https://www.openpolicyagent.org/).
+
+#### How to use within [`skaffold`](https://skaffold.dev/)
 
 In your `mafinest` section in your `skaffold.yaml` file, you can declare the repo as below:
 ```yaml
@@ -33,19 +40,29 @@ manifests:
   helm:
     releases:
       - name: your-app-name
-        remoteChart: app
         repo: https://cloud-yantra-oss.github.io/helm/
+        remoteChart: app
         valuesFiles:
           - path/to/your/apps/value.yaml
 ```
 
-## Chart List
-### Generic Application
-
-The chart at [app](charts/app) containt an helm chart for a generic microservice, which can be protected by a [OPA (Open Policy Agent)](https://www.openpolicyagent.org/).
-
 ### Postgresql 
 
-The chart at [postgresql](charts/postgresql) containt an helm chart for a deploying a Postgresql server.
+The chart at [postgresql](charts/postgresql) contain a helm chart for a deploying a Postgresql server.
 
 The default values are available in the [`values.yaml`](charts/postgresql/values.yaml) file.
+
+#### How to use within [`skaffold`](https://skaffold.dev/)
+
+In your `mafinest` section in your `skaffold.yaml` file, you can declare the repo as below:
+```yaml
+manifests:
+  helm:
+    releases:
+      - name: postgresql
+        repo: https://cloud-yantra-oss.github.io/helm/
+        remoteChart: postgresql
+        setValues:
+          image.repository: postgres
+          image.tag: 16
+```
