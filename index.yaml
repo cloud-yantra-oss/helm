@@ -43,6 +43,25 @@ entries:
   postgresql:
   - apiVersion: v2
     appVersion: 16.0.0
+    created: "2023-09-17T23:07:09.886478425Z"
+    description: PostgreSQL is an open-source object-relational database management
+      system (ORDBMS) emphasizing extensibility and technical standards compliance.
+    digest: 30ad10dfa798541c3d7c29ebe2349cd6076e645d8fabad8fafc3195a07abcff4
+    home: https://www.postgresql.org/
+    icon: https://en.wikipedia.org/wiki/PostgreSQL#/media/File:Postgresql_elephant.svg
+    keywords:
+    - postgresql
+    - postgres
+    - database
+    maintainers:
+    - email: pratim@chaudhuri.me
+      name: Pratim Chaudhuri
+    name: postgresql
+    urls:
+    - https://github.com/cloud-yantra-oss/helm/releases/download/postgresql-0.1.1/postgresql-0.1.1.tgz
+    version: 0.1.1
+  - apiVersion: v2
+    appVersion: 16.0.0
     created: "2023-09-17T22:54:33.195174901Z"
     description: PostgreSQL is an open-source object-relational database management
       system (ORDBMS) emphasizing extensibility and technical standards compliance.
@@ -60,4 +79,4 @@ entries:
     urls:
     - https://github.com/cloud-yantra-oss/helm/releases/download/postgresql-0.1.0/postgresql-0.1.0.tgz
     version: 0.1.0
-generated: "2023-09-17T22:54:33.195576003Z"
+generated: "2023-09-17T23:07:09.886491826Z"
