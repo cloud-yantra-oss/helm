@@ -13,7 +13,8 @@
 
 # Repository of Helm Charts
 
-A repository holding public Helm Charts, which are opinionated for development using Rancher Desktop. Should work on other installation of K8s, as well.
+A repository holding public Helm Charts, which are opinionated for development using Rancher Desktop.
+They should work on another installation of K8s, as well.
 
 
 ## How to use the repo?
@@ -73,7 +74,7 @@ manifests:
 
 ### 3. SurrealDB 
 
-The chart at [surrealdb](charts/surrealdb) contains a helm chart for deploying a Surreal server.
+The chart at [surrealdb](charts/surrealdb) contains a helm chart for deploying a SurrealDB server.
 
 The default values are available in the [`values.yaml`](charts/surrealdb/values.yaml) file.
 
