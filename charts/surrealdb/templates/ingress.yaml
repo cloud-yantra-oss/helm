@@ -1,0 +1,20 @@
+{{- if .Values.service.ingress.enabled }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ template "surrealdb.fullname" . }}
+spec:
+  rules:
+    - host: {{ .Values.service.ingress.host }}
+      http:
+        paths:
+          - path: {{ .Values.service.ingress.path }}
+            pathType: {{ .Values.service.ingress.pathType }}
+            backend:
+              service:
+                name: {{ template "surrealdb.fullname" . }}
+                port:
+                  name: surrealdb
+---
+{{- end }}

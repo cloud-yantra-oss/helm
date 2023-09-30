@@ -7,6 +7,8 @@
       * [How to use within `skaffold`](#how-to-use-within-skaffold)
     * [Postgresql](#postgresql-)
       * [How to use within `skaffold`](#how-to-use-within-skaffold-1)
+    * [Postgresql](#postgresql--1)
+      * [How to use within `skaffold`](#how-to-use-within-skaffold-2)
 <!-- TOC -->
 
 # Repository of Helm Charts
@@ -28,9 +30,10 @@ helm search repo cloud-yantra-oss
 ```
 
 ## Chart List
-### Generic Application
+### 1. Generic Application
 
-The chart at [app](charts/app) contain a helm chart for a generic microservice, which can be protected by a [OPA (Open Policy Agent)](https://www.openpolicyagent.org/).
+The chart at [app](charts/app) contains a helm chart for a generic microservice,
+which can be protected by [OPA (Open Policy Agent)](https://www.openpolicyagent.org/).
 
 #### How to use within [`skaffold`](https://skaffold.dev/)
 
@@ -46,9 +49,9 @@ manifests:
           - path/to/your/apps/value.yaml
 ```
 
-### Postgresql 
+### 2. Postgresql 
 
-The chart at [postgresql](charts/postgresql) contain a helm chart for a deploying a Postgresql server.
+The chart at [postgresql](charts/postgresql) contains a helm chart for deploying a Postgresql server.
 
 The default values are available in the [`values.yaml`](charts/postgresql/values.yaml) file.
 
@@ -65,4 +68,29 @@ manifests:
         setValues:
           image.repository: postgres
           image.tag: 16
+```
+
+
+### 3. SurrealDB 
+
+The chart at [surrealdb](charts/surrealdb) contains a helm chart for deploying a Surreal server.
+
+The default values are available in the [`values.yaml`](charts/surrealdb/values.yaml) file.
+
+#### How to use within [`skaffold`](https://skaffold.dev/)
+
+In your `mafinest` section in your `skaffold.yaml` file, you can declare the repo as below:
+```yaml
+manifests:
+  helm:
+    releases:
+      - name: surrealdb
+        repo: https://cloud-yantra-oss.github.io/helm/
+        remoteChart: surrealdb
+        setValues:
+          image.repository: docker.io
+          image.name: surrealdb/surrealdb
+          image.tag: latest
+          service.ingress.enabled: true
+          service.ingress.host: surrealdb.database.local
 ```
