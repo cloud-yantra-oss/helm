@@ -79,4 +79,27 @@ entries:
     urls:
     - https://github.com/cloud-yantra-oss/helm/releases/download/postgresql-0.1.0/postgresql-0.1.0.tgz
     version: 0.1.0
-generated: "2023-09-17T23:07:09.886491826Z"
+  surrealdb:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2023-09-30T23:57:33.642300472Z"
+    description: 'SurrealDB makes building and scaling realtime apps dramatically
+      quicker and easier. '
+    digest: 35982b89f24402d68a2907101850fe26e153411d8c57060eb55574152a06b541
+    home: https://surrealdb.com/
+    icon: https://en.wikipedia.org/wiki/PostgreSQL#/media/File:Postgresql_elephant.svg
+    keywords:
+    - surrealdb
+    - surreal
+    - database
+    - graph
+    - document
+    - relational
+    maintainers:
+    - email: pratim@chaudhuri.me
+      name: Pratim Chaudhuri
+    name: surrealdb
+    urls:
+    - https://github.com/cloud-yantra-oss/helm/releases/download/surrealdb-0.1.0/surrealdb-0.1.0.tgz
+    version: 0.1.0
+generated: "2023-09-30T23:57:33.642311073Z"
