@@ -3,11 +3,11 @@
 * [Repository of Helm Charts](#repository-of-helm-charts)
   * [How to use the repo?](#how-to-use-the-repo)
   * [Chart List](#chart-list)
-    * [Generic Application](#generic-application)
+    * [1. Generic Application](#1-generic-application)
       * [How to use within `skaffold`](#how-to-use-within-skaffold)
-    * [Postgresql](#postgresql-)
+    * [2. Postgresql](#2-postgresql-)
       * [How to use within `skaffold`](#how-to-use-within-skaffold-1)
-    * [Postgresql](#postgresql--1)
+    * [3. SurrealDB](#3-surrealdb-)
       * [How to use within `skaffold`](#how-to-use-within-skaffold-2)
 <!-- TOC -->
 
