@@ -1,0 +1,24 @@
+** Please be patient while the chart is being deployed **
+
+SurrealDB can be accessed via port {{ .Values.surrealdb.port }} on the following DNS name from within your cluster:
+
+    {{ template "surrealdb.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local - Read/Write connection
+
+The following are the credentials for connecting to the database:
+- Username: {{ .Values.surrealdb.username }}
+- Password: {{ .Values.surrealdb.password }}
+
+To connect to your database from outside the cluster, execute the following commands:
+
+{{- if contains "NodePort" .Values.service.type }}
+
+    export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
+    export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ template "surrealdb.fullname" . }})
+
+{{- else if contains "ClusterIP" .Values.service.type }}
+
+    kubectl port-forward --namespace {{ .Release.Namespace }} svc/{{ template "surrealdb.fullname" . }} {{ .Values.surrealdb.port }}:{{ .Values.surrealdb.port }}
+
+{{- end }}
+
+You can then visit https://surrealist.app/ for a UI, and work with the database.

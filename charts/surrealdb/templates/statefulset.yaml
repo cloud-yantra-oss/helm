@@ -1,0 +1,82 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ template "surrealdb.fullname" . }}
+  labels:
+    app: {{ include "surrealdb.name" . }}
+    chart: {{ template "surrealdb.chart" . }}
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
+spec:
+  serviceName: {{ template "surrealdb.fullname" . }}
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ template "surrealdb.name" . }}
+      release: {{ .Release.Name | quote }}
+  template:
+    metadata:
+      name: {{ template "surrealdb.fullname" . }}
+      labels:
+        app: {{ include "surrealdb.name" . | quote }}
+        chart: {{ template "surrealdb.chart" . }}
+        release: {{ .Release.Name | quote }}
+        heritage: {{ .Release.Service | quote }}
+    spec:
+      containers:
+        - name: {{ template "surrealdb.fullname" . }}
+          image: "{{ .Values.image.repository}}/{{ .Values.image.name }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+          args:
+            - start
+          env:
+            - name: SURREAL_LOG
+              value: {{ .Values.surrealdb.log_level | quote }}
+            - name: SURREAL_USER
+              value: {{ .Values.surrealdb.username | quote }}
+            - name: SURREAL_PASS
+              value: {{ .Values.surrealdb.password | quote }}
+            - name: SURREAL_AUTH
+              value: {{ .Values.surrealdb.auth | quote }}
+            {{- if .Values.persistence.enabled }}
+            - name: SURREAL_PATH
+              value: "file://{{ .Values.persistence.mountPath }}/{{ .Values.persistence.subPath }}"
+            {{- end }}
+            {{- if .Values.surrealdb.env }}
+            {{- range $key, $value := .Values.surrealdb.env }}
+            - name: "{{ $key }}"
+              value: {{ $value | quote }}
+            {{- end }}
+            {{- end }}
+          ports:
+            - name: surrealdb
+              containerPort: {{ .Values.surrealdb.port }}
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+          livenessProbe:
+{{ toYaml .Values.livenessProbe | indent 12 }}
+          readinessProbe:
+{{ toYaml .Values.readinessProbe | indent 12 }}
+          volumeMounts:
+        {{- if .Values.persistence.enabled }}
+            - name: data
+              mountPath: {{ .Values.persistence.mountPath }}
+              subPath: {{ .Values.persistence.subPath }}
+              readOnly: false
+        {{- end }}
+{{/*      {{- if .Values.persistence.enabled }}*/}}
+{{/*      volumes:*/}}
+{{/*        - name: data*/}}
+{{/*          emptyDir: { }*/}}
+{{/*      {{- end }}*/}}
+  {{- if .Values.persistence.enabled }}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: {{ .Values.persistence.accessModes }}
+        resources:
+          requests:
+            storage: {{ .Values.persistence.size }}
+  {{- end }}

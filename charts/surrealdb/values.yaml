@@ -1,0 +1,88 @@
+---
+## Set default image, imageTag, and imagePullPolicy.
+## ref: https://hub.docker.com/r/surrealdb/surrealdb
+##
+image:
+  repository: docker.io
+  name: surrealdb/surrealdb
+  tag: latest
+  pullPolicy: IfNotPresent
+
+## Expose the nifi service to be accessed from outside the cluster (LoadBalancer service).
+## or access it from within the cluster (ClusterIP service). Set the service type and the port to serve it.
+## ref: http://kubernetes.io/docs/user-guide/services/
+##
+service:
+  type: ClusterIP
+  annotations: {}
+  ingress:
+    enabled: true
+    annotations: {}
+    host: "surrealdb.database.local"
+    path: /
+    pathType: Prefix
+
+## SurrealDB values
+surrealdb:
+  username: surreal
+  password: surreal
+  log_level: info
+  auth: true
+  port: 8000
+  # Include additional environment values for SurrealDB.
+  # Executing the following command will list all the supported environment values.
+  # ` docker run -it --rm surrealdb/surrealdb:latest start --help `
+  env: {}
+securityContext:
+  enabled: true
+  fsGroup: 1001
+  runAsUser: 1001
+
+
+## Enable persistence using Persistent Volume Claims
+## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
+##
+persistence:
+  enabled: true
+  mountPath: /data/surrealdb
+  subPath: ""
+  accessModes:  [ReadWriteOnce]
+  ## Storage Capacity for persistent volume
+  size: 2Gi
+  annotations: {}
+
+## Configure liveness and readiness probes
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/
+##
+#readinessProbe:
+#  httpGet:
+#    path: /
+#    port: http
+#  initialDelaySeconds: 60
+#  periodSeconds: 15
+#  timeoutSeconds: 10
+#livenessProbe:
+#   httpGet:
+#     path: /
+#     port: http
+#   initialDelaySeconds: 60
+#   periodSeconds: 30
+#   timeoutSeconds: 10
+
+## Configure resource requests and limits
+## ref: http://kubernetes.io/docs/user-guide/compute-resources/
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #  cpu: 100m
+  #  memory: 128Mi
+  # requests:
+  #  cpu: 100m
+  #  memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
