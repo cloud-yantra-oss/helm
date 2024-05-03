@@ -2,6 +2,19 @@ apiVersion: v1
 entries:
   app:
   - apiVersion: v2
+    appVersion: 0.0.1
+    created: "2024-05-03T12:24:14.996524083Z"
+    description: A Helm chart for Kubernetes
+    digest: f895145bf5058c70ee2f89585d7423ca0be55853fe14386b8499a1676f0ada9c
+    maintainers:
+    - email: pratim@chaudhuri.me
+      name: Pratim Chaudhuri
+    name: app
+    type: application
+    urls:
+    - https://github.com/cloud-yantra-oss/helm/releases/download/app-0.2.1/app-0.2.1.tgz
+    version: 0.2.1
+  - apiVersion: v2
     appVersion: 0.0.0
     created: "2023-09-11T17:18:32.825306747Z"
     description: A Helm chart for Kubernetes
@@ -102,4 +115,4 @@ entries:
     urls:
     - https://github.com/cloud-yantra-oss/helm/releases/download/surrealdb-0.1.0/surrealdb-0.1.0.tgz
     version: 0.1.0
-generated: "2023-09-30T23:57:33.642311073Z"
+generated: "2024-05-03T12:24:14.996546294Z"
